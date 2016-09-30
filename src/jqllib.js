@@ -1,3 +1,4 @@
+import btoa from 'btoa'
 import __fetch from 'fetch-ponyfill'
 const {fetch: _fetch, Headers, Request} = __fetch()
 import formurlencoded from 'form-urlencoded'

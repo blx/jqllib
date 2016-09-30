@@ -11,6 +11,7 @@
   "license": "ISC",
   "homepage": "https://github.com/blx/jqllib",
   "dependencies": {
+    "btoa": "^1.1.2",
     "fetch-ponyfill": "^3.0.1",
     "form-urlencoded": "^1.4.1",
     "moment": "^2.15.1"
