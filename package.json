@@ -2,8 +2,7 @@
   "name": "jqllib",
   "version": "0.0.1",
   "description": "Lightweight client for making Mixpanel JQL queries",
-  "main": "index.js",
-  "scripts": {},
+  "main": "lib/jqllib.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/blx/jqllib.git"
@@ -12,9 +11,17 @@
   "license": "ISC",
   "homepage": "https://github.com/blx/jqllib",
   "dependencies": {
-    "fetch-ponyfill": "^3.0.1",
     "form-urlencoded": "^1.4.1",
     "isomorphic-fetch": "^2.2.1",
     "moment": "^2.15.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.16.0",
+    "babel-core": "^6.16.0",
+    "babel-preset-es2015": "^6.16.0"
+  },
+  "scripts": {
+    "build": "rm -rf ./lib && babel src --out-dir lib",
+    "prepublish": "npm run build"
   }
 }
