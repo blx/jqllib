@@ -1,8 +1,7 @@
-import 'isomorphic-fetch'
+import __fetch from 'fetch-ponyfill'
+const {fetch: _fetch, Headers, Request} = __fetch()
 import formurlencoded from 'form-urlencoded'
 import moment from 'moment'
-
-const _fetch = fetch
 
 const MP_API_JQL_URI = 'https://mixpanel.com/api/2.0/jql/'
 
@@ -34,7 +33,7 @@ function mpFetch(jql) {
 
     const data = formurlencoded({
         script: jql,
-        params: {}
+        params: JSON.stringify({})
     })
 
     return _fetch(new Request(MP_API_JQL_URI), {
@@ -74,13 +73,11 @@ export function groupedJql(events, dateRange, propsExpr='x.properties') {
 // [EventName], (Momentable, Momentable) -> str
 export function baseJql(events, dateRange) {
     const [from_date, to_date] = dateRange.map(s => dateFormat(moment(s)))
-    return `
-        return Events(${JSON.stringify({
-            from_date,
-            to_date,
-            event_selectors: events
-        })})
-    `
+    return `return Events(${JSON.stringify({
+                from_date,
+                to_date,
+                event_selectors: events
+            })})`
 }
 
 // Moment -> str
