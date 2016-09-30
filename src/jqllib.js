@@ -2,6 +2,8 @@ import 'isomorphic-fetch'
 import formurlencoded from 'form-urlencoded'
 import moment from 'moment'
 
+const _fetch = fetch
+
 const MP_API_JQL_URI = 'https://mixpanel.com/api/2.0/jql/'
 
 let _headers = new Headers()
@@ -35,7 +37,7 @@ function mpFetch(jql) {
         params: {}
     })
 
-    return fetch(new Request(MP_API_JQL_URI), {
+    return _fetch(new Request(MP_API_JQL_URI), {
         method: 'POST',
         headers: _headers,
         body: data,
