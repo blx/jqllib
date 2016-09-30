@@ -1,6 +1,6 @@
 {
   "name": "jqllib",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Lightweight client for making Mixpanel JQL queries",
   "main": "lib/jqllib.js",
   "repository": {
