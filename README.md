@@ -7,7 +7,7 @@ This is an alternative to including the heavyweight official `MP` library.
 ## Usage
 
 ```javascript
-import jqllib from 'jqllib'
+import * as jqllib from 'jqllib'
 
 jqllib.setApiKey(MIXPANEL_SECRET_KEY)
 
