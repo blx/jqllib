@@ -3,13 +3,15 @@
   "version": "0.0.1",
   "description": "Lightweight client for making Mixpanel JQL queries",
   "main": "index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/blx/jqllib.git"
   },
   "author": "blx",
   "license": "ISC",
-  "homepage": "https://github.com/blx/jqllib"
+  "homepage": "https://github.com/blx/jqllib",
+  "dependencies": {
+    "moment": "^2.15.1"
+  }
 }
