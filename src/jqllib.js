@@ -52,6 +52,8 @@ export const fetch = mpFetch
  */
 // [EventName], (Momentable, Momentable), str? -> str
 export function groupedJql(events, dateRange, propsExpr='x.properties') {
+    // We clone the event's properties, since otherwise references to them are lost in
+    // Mixpanel's map-reduce style processing.
     return `
         ${baseJql(events, dateRange)}
         .groupByUser((acc, xs) => {

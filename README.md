@@ -1,8 +1,14 @@
 # jqllib
 
-Lightweight client for making Mixpanel JQL queries.
+Lightweight, isomorphic JS client for making Mixpanel JQL queries.
 
 This is an alternative to including the heavyweight official `MP` library.
+
+This does two things:
+- provides functions to generate base JQL queries (`baseJql([EventName], [Date, Date])` and `groupedJql`)
+- provides a function to post JQL queries to Mixpanel's API
+
+Examples are in ES6 but the NPM build is transpiled down to ES5 for ease of use.
 
 ## Usage
 
