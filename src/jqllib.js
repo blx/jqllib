@@ -76,11 +76,13 @@ export function groupedJql(events, dateRange, propsExpr='x.properties') {
 // [EventName], (Momentable, Momentable) -> str
 export function baseJql(events, dateRange) {
     const [from_date, to_date] = dateRange.map(s => dateFormat(moment(s)))
-    return `return Events(${JSON.stringify({
-                from_date,
-                to_date,
-                event_selectors: events
-            })})`
+    const options = {from_date, to_date}
+
+    if (events && events.length) {
+        options.event_selectors = events
+    }
+
+    return `return Events(${JSON.stringify(options)})`
 }
 
 // Moment -> str
