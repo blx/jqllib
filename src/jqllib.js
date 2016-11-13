@@ -47,6 +47,21 @@ function mpFetch(jql) {
 }
 export const fetch = mpFetch
 
+export function peopleJql(dateRange, events=[], propsExpr='x.event.properties') {
+    return `
+        ${baseJql(dateRange, events, {people: true})}
+        .groupByUser((acc, xs) => {
+            acc = acc || {events: [], user: xs[0].user}
+            acc.events = acc.events.concat(xs.map(x => ({
+                time: x.event.time,
+                name: x.event.name,
+                properties: _.clone(${propsExpr})
+            })))
+            return acc
+        })
+    `
+}
+
 /**
  * JQL query to fetch the `events` within `dateRange`, grouped by distinct user.
  */
@@ -55,7 +70,7 @@ export function groupedJql(dateRange, events=[], propsExpr='x.properties') {
     // We clone the event's properties, since otherwise references to them are lost in
     // Mixpanel's map-reduce style processing.
     return `
-        ${baseJql(events, dateRange)}
+        ${baseJql(dateRange, events)}
         .groupByUser((acc, xs) => {
             acc = acc || {events: []}
             acc.events = acc.events.concat(xs.map(x => ({
@@ -70,12 +85,13 @@ export function groupedJql(dateRange, events=[], propsExpr='x.properties') {
 
 /**
  * JQL query to fetch the `events` within `dateRange`. If event names are not
- * specified, all events within the range will be fetched.
+ * specified, all events within the range will be fetched. If `people` is true,
+ * a join against People will be performed.
  *
  * Note: JQL runs in a limited environment. Underscore.js is available.
  */
-// (Momentable, Momentable), [EventName]? -> str
-export function baseJql(dateRange, events=[]) {
+// (Momentable, Momentable), [EventName]?, {people?: bool} -> str
+export function baseJql(dateRange, events=[], {people=false}={}) {
     const [from_date, to_date] = dateRange.map(s => dateFormat(moment(s)))
     const options = {from_date, to_date}
 
@@ -83,7 +99,10 @@ export function baseJql(dateRange, events=[]) {
         options.event_selectors = events
     }
 
-    return `return Events(${JSON.stringify(options)})`
+    return ('return ' +
+            (people ? 'join(' : '') +
+            `Events(${JSON.stringify(options)})` +
+            (people ? ', People()).filter(d => d.event)' : ''))
 }
 
 // Moment -> str

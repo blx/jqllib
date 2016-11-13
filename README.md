@@ -17,7 +17,7 @@ import * as jqllib from 'jqllib'
 
 jqllib.setApiKey(MIXPANEL_SECRET_KEY)
 
-const query = jqllib.baseJql(['Account Created'], ['2016-07-01', '2016-07-08'])
+const query = jqllib.baseJql(['2016-07-01', '2016-07-08'], ['Account Created'])
 
 jqllib
     .fetch(query)
@@ -25,8 +25,8 @@ jqllib
 
 // [{name: 'Account Created', distinct_id: 1234, properties: {...}, ...}]
 
-const groupedByUserQuery = jqllib.groupedJql(['Clicked Button A', 'Clicked Button B'],
-                                             ['2016-09-01', '2016-09-15'])
+const groupedByUserQuery = jqllib.groupedJql(['2016-09-01', '2016-09-15'],
+                                             ['Clicked Button A', 'Clicked Button B'])
 
 jqllib
     .fetch(groupedByUserQuery)
