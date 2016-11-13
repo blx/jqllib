@@ -51,7 +51,7 @@ export const fetch = mpFetch
  * JQL query to fetch the `events` within `dateRange`, grouped by distinct user.
  */
 // [EventName], (Momentable, Momentable), str? -> str
-export function groupedJql(events, dateRange, propsExpr='x.properties') {
+export function groupedJql(dateRange, events=[], propsExpr='x.properties') {
     // We clone the event's properties, since otherwise references to them are lost in
     // Mixpanel's map-reduce style processing.
     return `
@@ -69,12 +69,13 @@ export function groupedJql(events, dateRange, propsExpr='x.properties') {
 }
 
 /**
- * JQL query to fetch the `events` within `dateRange`.
+ * JQL query to fetch the `events` within `dateRange`. If event names are not
+ * specified, all events within the range will be fetched.
  *
  * Note: JQL runs in a limited environment. Underscore.js is available.
  */
-// [EventName], (Momentable, Momentable) -> str
-export function baseJql(events, dateRange) {
+// (Momentable, Momentable), [EventName]? -> str
+export function baseJql(dateRange, events=[]) {
     const [from_date, to_date] = dateRange.map(s => dateFormat(moment(s)))
     const options = {from_date, to_date}
 
