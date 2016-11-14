@@ -2,6 +2,7 @@ import btoa from 'btoa'
 import __fetch from 'fetch-ponyfill'
 const {fetch: _fetch, Headers, Request} = __fetch()
 import formurlencoded from 'form-urlencoded'
+import {fromPairs} from 'lodash'
 import moment from 'moment'
 
 const MP_API_JQL_URI = 'https://mixpanel.com/api/2.0/jql/'
@@ -19,14 +20,10 @@ export function setApiKey(key) {
 }
 
 /**
- * Returns the results of running the `jql` at Mixpanel (either a list of events or a list of groups,
- * depending on your JQL).
- * Note: the Mixpanel API limits running time to ~2 mins.
+ * Returns the results of running the `jql` at Mixpanel.
+ * Note: the Mixpanel API limits running time to a few minutes.
  */
-// <MPResult> str -> Promise<[MPResult]>
-// where MPResult :: MPEvent | MPGroup
-// where MPEvent :: {name: str, distinct_id: str, time: int, sampling_factor: int, properties: {[str]: str}}
-//       MPGroup :: {key: [str], value: [<WHATEVER>]}
+// str -> Promise<?>
 function mpFetch(jql) {
     if (!_headers.has('Authorization')) { throw 'API key not set' }
 
@@ -47,7 +44,25 @@ function mpFetch(jql) {
 }
 export const fetch = mpFetch
 
-export function peopleJql(dateRange, events=[], propsExpr='x.event.properties') {
+/**
+ * JQL query to fetch the People records with distinct ID in the `distinctIds`.
+ */
+// [str] -> str
+export function peopleJql(distinctIds) {
+    distinctIds = fromPairs(distinctIds.map(x => [x, 1]))  // O(1)ish hashset membership
+    return `
+        const ids = ${JSON.stringify(distinctIds)}
+        return People()
+            .filter(x => ids[x.distinct_id])
+    `
+}
+
+/**
+ * JQL query to fetch the `events` within `dateRange`, grouped by distinct user and with the
+ * user's People record attached when applicable.
+ */
+// (Momentable, Momentable), [EventName]?, str? -> str
+export function groupedPeopleJql(dateRange, events=[], propsExpr='x.event.properties') {
     return `
         ${baseJql(dateRange, events, {people: true})}
         .groupByUser((acc, xs) => {
@@ -65,7 +80,7 @@ export function peopleJql(dateRange, events=[], propsExpr='x.event.properties') 
 /**
  * JQL query to fetch the `events` within `dateRange`, grouped by distinct user.
  */
-// [EventName], (Momentable, Momentable), str? -> str
+// (Momentable, Momentable), [EventName]?, str? -> str
 export function groupedJql(dateRange, events=[], propsExpr='x.properties') {
     // We clone the event's properties, since otherwise references to them are lost in
     // Mixpanel's map-reduce style processing.
