@@ -47,14 +47,21 @@ export const fetch = mpFetch
 /**
  * JQL query to fetch the People records with distinct ID in the `distinctIds`.
  */
-// [str] -> str
-export function peopleJql(distinctIds) {
+// [str], boolean? -> str
+export function peopleJql(distinctIds, camelCase=true) {
     distinctIds = fromPairs(distinctIds.map(x => [x, 1]))  // O(1)ish hashset membership
     return `
         const ids = ${JSON.stringify(distinctIds)}
         return People()
-            .filter(x => ids[x.distinct_id])
-    `
+            .filter(x => ids[x.distinct_id])`
+        + (camelCase ? `
+            .map(x => {
+                const xx = _.clone(x)
+                xx.distinctId = xx.distinct_id
+                delete xx.distinct_id
+                return xx
+            })
+            ` : '')
 }
 
 /**
