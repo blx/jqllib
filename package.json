@@ -1,6 +1,6 @@
 {
   "name": "jqllib",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Functions to generate Mixpanel JQL queries",
   "main": "lib/jql.js",
   "typings": "lib/jql",
